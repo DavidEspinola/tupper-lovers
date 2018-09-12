@@ -1,8 +1,9 @@
 .DS_Store
+node_modules
 tupper-lovers-front/node_modules
 functions/node_modules
 
-./public
+public
 
 # local env files
 tupper-lovers-front/.env.local
