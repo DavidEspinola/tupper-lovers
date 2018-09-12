@@ -19,13 +19,13 @@ const router = new Router({
       }
     },
     {
-      path: '/about',
-      name: 'about',
+      path: '/storage/:id',
+      name: 'storage',
       private: true,
       meta: {
         private: true
       },
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: () => import(/* webpackChunkName: "storage" */ './views/Storage.vue')
     },
     {
       path: '/login',

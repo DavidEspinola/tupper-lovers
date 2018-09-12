@@ -8,7 +8,8 @@ const storageRef = firestore.collection('storage');
 
 export default new Vuex.Store({
   state: {
-    storages: []
+    storages: [],
+    storageContent: {}
   },
   mutations: {
     storages(state, storages) {
@@ -23,13 +24,20 @@ export default new Vuex.Store({
     },
     deletedStorage(state, deletedStorage) {
       state.storages = state.storages.filter(storage => storage !== deletedStorage);
+    },
+    storageContent(state, { id, storageContent }) {
+      state.storageContent = { ...state.storageContent, [id]: storageContent };
     }
   },
   actions: {
-    async getStorages({ commit }) {
+    async getStorages({ state, commit, dispatch }) {
       try {
-        const storages = await storageRef.get();
-        commit('storages', storages.docs.map( doc => ({ id: doc.id, ...doc.data() }) ));
+        const response = await storageRef.get();
+        const storages = response.docs.map( doc => ({ id: doc.id, ...doc.data() }) );
+        commit('storages', storages);
+        if(!Object.keys(state.storageContent).length) {
+          storages.forEach(storage => dispatch('getStorageContent', storage.id));
+        }
       } catch(e) { handleError(e) }
     },
     async changeStorageName({ commit }, { id, name }) {
@@ -48,6 +56,16 @@ export default new Vuex.Store({
       try {
         await storageRef.doc(storage.id).delete();
         commit('deletedStorage', storage);
+      } catch(e) { handleError(e) }
+    },
+    async getStorageContent({ state, commit, dispatch }, id) {
+      try {
+        const response = await storageRef.doc(id).collection('tuppers').get();
+        const storageContent = response.docs.map( doc => ({ id: doc.id, ...doc.data() }));
+        commit('storageContent', { id, storageContent });
+        if(!Object.keys(state.storages).length) {
+          dispatch('getStorages');
+        }
       } catch(e) { handleError(e) }
     }
   }

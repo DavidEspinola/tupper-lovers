@@ -19,6 +19,7 @@
       </div>
       <div v-else>
         <h2>{{storage.name}}</h2>
+        <router-link :to="'/storage/' + storage.id">Ver </router-link> |&nbsp;
         <a href="" @click.prevent="editMode(storage)">Editar</a> |&nbsp;
         <a href="" @click.prevent="deleteStorage(storage)">Eliminar</a>
       </div>
@@ -28,13 +29,11 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
   },
   data() {
     return {
