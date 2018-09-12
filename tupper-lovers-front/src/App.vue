@@ -2,11 +2,26 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">About</router-link> |
+      <a href="" @click.prevent="logOut()">Cerrar sesión</a>
     </div>
     <router-view/>
   </div>
 </template>
+
+<script>
+import { firebase } from '@/utils/firebase';
+
+export default {
+  methods: {
+    logOut() {
+      firebase.auth().signOut();
+      this.$router.go();
+    }
+  }
+}
+</script>
+
 
 <style lang="scss">
 #app {
