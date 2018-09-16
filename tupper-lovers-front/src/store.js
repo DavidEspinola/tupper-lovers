@@ -27,6 +27,15 @@ export default new Vuex.Store({
     },
     storageContent(state, { id, storageContent }) {
       state.storageContent = { ...state.storageContent, [id]: storageContent };
+    },
+    addTupper(state, { storageId, newTupper }){
+      state.storageContent[storageId].push(newTupper);
+    },
+    editTupper(state, { storageId, newTupper }) {
+      const oldTupper = state.storageContent[storageId].find(tupper => tupper.id === newTupper.id);
+      const index = state.storageContent[storageId].indexOf(oldTupper);
+      state.storageContent[storageId][index] = newTupper;
+      //state.storageContent = { ...state.storageContent, [storageId]: { newContent } 
     }
   },
   actions: {
@@ -67,7 +76,19 @@ export default new Vuex.Store({
           dispatch('getStorages');
         }
       } catch(e) { handleError(e) }
-    }
+    },
+    async editTupper({ commit }, {storageId, newTupper}) {
+      try {
+        await storageRef.doc(storageId).collection('tuppers').doc(newTupper.id).update(newTupper);
+        commit('editTupper', {storageId, newTupper});
+      } catch(e) { handleError(e) }
+    },
+    async addTupper({ commit }, {storageId, newTupper}) {
+      try {
+        const { id } = await storageRef.doc(storageId).collection('tuppers').add(newTupper);
+        commit('addTupper', { storageId, newTupper: {id, ...newTupper} });
+      } catch(e) { handleError(e) }
+    },
   }
 });
 
